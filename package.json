@@ -1,0 +1,25 @@
+{
+  "name": "css-media-merge",
+  "version": "0.1.0",
+  "description": "Finds all @media queries, merges ones that are the same, and moves them to the bottom of the page.",
+  "main": "media-smush.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/coriandor/css-media-merge.git"
+  },
+  "keywords": [
+    "css"
+  ],
+  "author": "Joel Kuhn",
+  "license": "GPL 2",
+  "bugs": {
+    "url": "https://github.com/coriandor/css-media-merge/issues"
+  },
+  "homepage": "https://github.com/coriandor/css-media-merge#readme",
+  "dependencies": {
+    "css-parse": "*"
+  }
+}
