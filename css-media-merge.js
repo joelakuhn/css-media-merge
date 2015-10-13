@@ -45,6 +45,14 @@ function merge_file(file) {
   return merge(file_contents.toString())
 }
 
+function get_media_size(media_spec) {
+  var max_match = media_spec.match(/max-width:\s*(\d+)px/);
+  if (max_match) return max_match[1];
+  var min_match = media_spec.match(/min-width:\s*(\d+)px/);
+  if (min_match) return min_match[1];
+  return 0
+}
+
 function merge(css) {
   var parsed = cssParse(css);
   var rules = parsed.stylesheet.rules;
@@ -62,6 +70,10 @@ function merge(css) {
   for (var key in mediaGrouped) {
     merged.push(merge_media(mediaGrouped[key]));
   }
+
+  merged.sort(function(a, b) {
+    return get_media_size(a.media) < get_media_size(b.media)
+  });
 
   var acc = new InMemoryAcc();
   printRule(non_media, acc);
