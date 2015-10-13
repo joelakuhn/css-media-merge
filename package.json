@@ -2,7 +2,7 @@
   "name": "css-media-merge",
   "version": "0.1.0",
   "description": "Finds all @media queries, merges ones that are the same, and moves them to the bottom of the page.",
-  "main": "media-smush.js",
+  "main": "css-media-merge",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
