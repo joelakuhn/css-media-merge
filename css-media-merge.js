@@ -60,8 +60,6 @@ function merge(css) {
   printRule(merged);
 }
 
-merge_file('style.css');
-
 module.exports = {
   mergeFile: merge_file,
   merge: merge
