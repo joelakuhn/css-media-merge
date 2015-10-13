@@ -1,27 +1,33 @@
 var cssParse = require('css-parse');
 var fs = require('fs');
 
-function printRule(rule) {
+function InMemoryAcc () {
+  this.push = (s) => this.stack.push(s + "\n");
+  this.stack = [];
+  this.get = () => this.stack.join('');
+}
+
+function printRule(rule, acc) {
   if (rule instanceof Array) {
     for (var i=0; i<rule.length; i++) {
-      printRule(rule[i]);
+      printRule(rule[i], acc);
     }
   }
   else if (rule.type == 'comment') {
-    console.log('/*' + rule.comment + '*/');
+    acc.push('/*' + rule.comment + '*/');
   }
   else if (rule.type == 'rule') {
-    console.log(rule.selectors + '{');
-    printRule(rule.declarations);
-    console.log('}')
+    acc.push(rule.selectors + '{');
+    printRule(rule.declarations, acc);
+    acc.push('}')
   }
   else if (rule.type == 'declaration') {
-    console.log(rule.property + ':' + rule.value + ';');
+    acc.push(rule.property + ':' + rule.value + ';');
   }
   else if (rule.type == 'media') {
-    console.log('@media' + rule.media + '{');
-    printRule(rule.rules);
-    console.log('}');
+    acc.push('@media' + rule.media + '{');
+    printRule(rule.rules, acc);
+    acc.push('}');
   }
 }
 
@@ -35,7 +41,7 @@ function merge_media(medias) {
 
 function merge_file(file) {
   var file_contents = fs.readFileSync(file);
-  merge(file_contents.toString())
+  return merge(file_contents.toString())
 }
 
 function merge(css) {
@@ -56,8 +62,11 @@ function merge(css) {
     merged.push(merge_media(mediaGrouped[key]));
   }
 
-  printRule(non_media);
-  printRule(merged);
+  var acc = new InMemoryAcc();
+  printRule(non_media, acc);
+  printRule(merged, acc);
+
+  return acc.get();
 }
 
 module.exports = {
