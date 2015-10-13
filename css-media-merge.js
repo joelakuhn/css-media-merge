@@ -7,27 +7,28 @@ function InMemoryAcc () {
   this.get = () => this.stack.join('');
 }
 
-function printRule(rule, acc) {
+function printRule(rule, acc, indent) {
+  if (typeof indent == 'undefined') indent = '';
   if (rule instanceof Array) {
     for (var i=0; i<rule.length; i++) {
-      printRule(rule[i], acc);
+      printRule(rule[i], acc, indent);
     }
   }
   else if (rule.type == 'comment') {
-    acc.push('/*' + rule.comment + '*/');
+    acc.push(indent + '/*' + rule.comment + '*/');
   }
   else if (rule.type == 'rule') {
-    acc.push(rule.selectors + '{');
-    printRule(rule.declarations, acc);
-    acc.push('}')
+    acc.push(indent + rule.selectors + '{');
+    printRule(rule.declarations, acc, indent + '  ');
+    acc.push(indent + '}')
   }
   else if (rule.type == 'declaration') {
-    acc.push(rule.property + ':' + rule.value + ';');
+    acc.push(indent + rule.property + ':' + rule.value + ';');
   }
   else if (rule.type == 'media') {
-    acc.push('@media' + rule.media + '{');
-    printRule(rule.rules, acc);
-    acc.push('}');
+    acc.push(indent + '@media' + rule.media + '{');
+    printRule(rule.rules, acc, indent + '  ');
+    acc.push(indent + '}');
   }
 }
 
