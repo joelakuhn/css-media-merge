@@ -40,9 +40,9 @@ function merge_media(medias) {
   return media;
 }
 
-function merge_file(file) {
+function merge_file(file, options) {
   var file_contents = fs.readFileSync(file);
-  return merge(file_contents.toString())
+  return merge(file_contents.toString(), options)
 }
 
 function get_media_size(media_spec) {
@@ -50,10 +50,11 @@ function get_media_size(media_spec) {
   if (max_match) return max_match[1];
   var min_match = media_spec.match(/min-width:\s*(\d+)px/);
   if (min_match) return min_match[1];
-  return 0
+  return 0;
 }
 
-function merge(css) {
+function merge(css, options) {
+  options = options || {};
   var parsed = cssParse(css);
   var rules = parsed.stylesheet.rules;
   var media = rules.filter((rule) => rule.type == 'media');
@@ -71,9 +72,16 @@ function merge(css) {
     merged.push(merge_media(mediaGrouped[key]));
   }
 
-  merged.sort(function(a, b) {
-    return get_media_size(a.media) < get_media_size(b.media)
-  });
+  if (options.mobile_first) {
+    merged.sort(function(a, b) {
+      return get_media_size(a.media) > get_media_size(b.media)
+    });
+  }
+  else {
+    merged.sort(function(a, b) {
+      return get_media_size(a.media) < get_media_size(b.media)
+    });
+  }
 
   var acc = new InMemoryAcc();
   printRule(non_media, acc);
