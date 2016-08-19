@@ -2,16 +2,16 @@ var cssParse = require('css-parse');
 var fs = require('fs');
 
 function InMemoryAcc () {
-  this.push = (s) => this.stack.push(s + "\n");
+  this.push = (s) => this.stack.push(s);
   this.stack = [];
-  this.get = () => this.stack.join('');
+  this.get = (sep) => this.stack.join(sep || '');
 }
 
-function printRule(rule, acc, indent) {
+function printRule(rule, acc, indent, indent_text) {
   if (typeof indent == 'undefined') indent = '';
   if (rule instanceof Array) {
     for (var i=0; i<rule.length; i++) {
-      printRule(rule[i], acc, indent);
+      printRule(rule[i], acc, indent, indent_text);
     }
   }
   else if (rule.type == 'comment') {
@@ -19,7 +19,7 @@ function printRule(rule, acc, indent) {
   }
   else if (rule.type == 'rule') {
     acc.push(indent + rule.selectors + '{');
-    printRule(rule.declarations, acc, indent + '  ');
+    printRule(rule.declarations, acc, indent + indent_text, indent_text);
     acc.push(indent + '}')
   }
   else if (rule.type == 'declaration') {
@@ -27,7 +27,7 @@ function printRule(rule, acc, indent) {
   }
   else if (rule.type == 'media') {
     acc.push(indent + '@media' + rule.media + '{');
-    printRule(rule.rules, acc, indent + '  ');
+    printRule(rule.rules, acc, indent + indent_text, indent_text);
     acc.push(indent + '}');
   }
 }
@@ -54,11 +54,13 @@ function get_media_size(media_spec) {
 }
 
 function merge(css, options) {
-  options = options || {};
-  var parsed = cssParse(css);
-  var rules = parsed.stylesheet.rules;
-  var media = rules.filter((rule) => rule.type == 'media');
-  var non_media = rules.filter((rule) => rule.type != 'media');
+  options         = options || {};
+  var parsed      = cssParse(css);
+  var rules       = parsed.stylesheet.rules;
+  var media       = rules.filter((rule) => rule.type == 'media');
+  var non_media   = rules.filter((rule) => rule.type != 'media');
+  var indent_text = options.minify ? '' : '  ';
+  var line_sep    = options.minify ? '' : "\n";
 
   var mediaGrouped = {};
   media.forEach(function(rule) {
@@ -84,10 +86,10 @@ function merge(css, options) {
   }
 
   var acc = new InMemoryAcc();
-  printRule(non_media, acc);
-  printRule(merged, acc);
+  printRule(non_media, acc, '', indent_text);
+  printRule(merged, acc, '', indent_text);
 
-  return acc.get();
+  return acc.get(line_sep);
 }
 
 module.exports = {
