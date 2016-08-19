@@ -14,7 +14,7 @@ function printRule(rule, acc, indent, indent_text) {
       printRule(rule[i], acc, indent, indent_text);
     }
   }
-  else if (rule.type == 'comment') {
+  else if (rule.type == 'comment' && indent) {
     acc.push(indent + '/*' + rule.comment + '*/');
   }
   else if (rule.type == 'rule') {
