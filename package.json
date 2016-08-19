@@ -1,10 +1,13 @@
 {
   "name": "css-media-merge",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Finds all @media queries, merges ones that are the same, and moves them to the bottom of the page.",
   "main": "css-media-merge",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "bin": {
+    "css-media-merge": "./css-media-merge-cli.js"
   },
   "repository": {
     "type": "git",
@@ -20,6 +23,6 @@
   },
   "homepage": "https://github.com/coriandor/css-media-merge#readme",
   "dependencies": {
-    "css-parse": "*"
+    "css-parse": "2.0.0"
   }
 }

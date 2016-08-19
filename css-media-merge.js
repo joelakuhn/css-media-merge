@@ -74,12 +74,12 @@ function merge(css, options) {
 
   if (options.mobile_first) {
     merged.sort(function(a, b) {
-      return get_media_size(a.media) > get_media_size(b.media)
+      return get_media_size(a.media) < get_media_size(b.media)
     });
   }
   else {
     merged.sort(function(a, b) {
-      return get_media_size(a.media) < get_media_size(b.media)
+      return get_media_size(a.media) > get_media_size(b.media)
     });
   }
 
