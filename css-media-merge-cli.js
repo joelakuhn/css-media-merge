@@ -34,7 +34,7 @@ for (var i=0; i<args.length; i++) {
 
 
 if (inFile) {
-	var merged = cmm.mergeFile('./test-css.css', options);
+	var merged = cmm.mergeFile(inFile, options);
 	console.log(merged);
 }
 else {
