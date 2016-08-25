@@ -26,7 +26,7 @@ function printRule(rule, acc, indent, indent_text) {
     acc.push(indent + rule.property + ':' + rule.value + ';');
   }
   else if (rule.type == 'media') {
-    acc.push(indent + '@media' + rule.media + '{');
+    acc.push(indent + '@media ' + rule.media + '{');
     printRule(rule.rules, acc, indent + indent_text, indent_text);
     acc.push(indent + '}');
   }
