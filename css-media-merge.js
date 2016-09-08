@@ -47,10 +47,10 @@ function merge_file(file, options) {
 
 function get_media_size(media_spec) {
   var max_match = media_spec.match(/max-width:\s*(\d+)px/);
-  if (max_match) return max_match[1];
+  if (max_match) return { type: 'max', val: 1 * max_match[1] };
   var min_match = media_spec.match(/min-width:\s*(\d+)px/);
-  if (min_match) return min_match[1];
-  return 0;
+  if (min_match) return { type: 'min', val: 1 * min_match[1] };
+  return { type: 'other' };
 }
 
 function merge(css, options) {
@@ -74,16 +74,18 @@ function merge(css, options) {
     merged.push(merge_media(mediaGrouped[key]));
   }
 
-  if (options.mobile_first) {
-    merged.sort(function(a, b) {
-      return get_media_size(a.media) < get_media_size(b.media)
-    });
-  }
-  else {
-    merged.sort(function(a, b) {
-      return get_media_size(a.media) > get_media_size(b.media)
-    });
-  }
+  merged.sort(function(a, b) {
+    var size_a = get_media_size(a.media);
+    var size_b = get_media_size(b.media);
+    if (size_a.type == 'other')
+      return 1;
+    else if (size_b.type == 'other')
+      return -1;
+    else if (options.mobile_first)
+      return size_a.val > size_b.val;
+    else
+      return size_a.val < size_b.val;
+  });
 
   var acc = new InMemoryAcc();
   printRule(non_media, acc, '', indent_text);
